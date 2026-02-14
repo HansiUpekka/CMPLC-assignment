@@ -172,7 +172,7 @@ void match(TokenType type)
     if (currentToken.type == type) 
     {
         record_token(currentToken);
-        printToken(currentToken);   // 👈 PRINT TOKEN HERE
+        printToken(currentToken);   
         currentToken = getNextToken();
     } 
     else
