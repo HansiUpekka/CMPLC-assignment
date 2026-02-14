@@ -70,6 +70,45 @@ typedef struct {
     size_t symbol_capacity;
 } Parser;
 
+static const char *token_type_name(TokenType type) {
+    switch (type) {
+        case TOKEN_EOF: return "EOF";
+        case TOKEN_INT: return "KEYWORD_INT";
+        case TOKEN_PRINT: return "KEYWORD_PRINT";
+        case TOKEN_IDENT: return "IDENTIFIER";
+        case TOKEN_NUMBER: return "NUMBER";
+        case TOKEN_ASSIGN: return "ASSIGN";
+        case TOKEN_PLUS: return "PLUS";
+        case TOKEN_MINUS: return "MINUS";
+        case TOKEN_STAR: return "STAR";
+        case TOKEN_SLASH: return "SLASH";
+        case TOKEN_SEMICOLON: return "SEMICOLON";
+        case TOKEN_LPAREN: return "LPAREN";
+        case TOKEN_RPAREN: return "RPAREN";
+        case TOKEN_INVALID: return "INVALID";
+        default: return "UNKNOWN";
+    }
+}
+
+static void print_tokens(const TokenList *list) {
+    printf("Tokens:\n");
+    for (size_t i = 0; i < list->count; i++) {
+        const Token *token = &list->tokens[i];
+        if (token->type == TOKEN_EOF) {
+            continue;
+        }
+        if (token->type == TOKEN_NUMBER) {
+            printf("  %s: %s (value=%ld) at %d:%d\n",
+                   token_type_name(token->type), token->lexeme, token->value,
+                   token->line, token->column);
+        } else {
+            printf("  %s: %s at %d:%d\n",
+                   token_type_name(token->type), token->lexeme,
+                   token->line, token->column);
+        }
+    }
+}
+
 static void die(const char *message) {
     fprintf(stderr, "%s\n", message);
     exit(EXIT_FAILURE);
@@ -439,6 +478,7 @@ int main(int argc, char *argv[]) {
     TokenList list;
     token_list_init(&list);
     tokenize_source(&list, source);
+    print_tokens(&list);
 
     Parser parser;
     parser_init(&parser, &list);
